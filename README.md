@@ -96,4 +96,66 @@ Output :
       Server is running on port 3000...
       MongoDB connected successfully
 
-11.To perform CRUD operations in the database first we need to create the Schema.
+11.Before performing any CRUD operations in the database first we need to create the Schema  
+   and then the user model.
+
+    ```user.model.js
+         //Schema mainly used to define the structure of the user data
+             const userSchema = new mongoose.Schema({
+                    username: String,
+                    email: String,
+                    age: Number
+                });
+
+        //create user model : used to create a model for the user schema to do CRUD operations
+             const userModel = mongoose.model('User', userSchema);  
+
+        //export user model : used to export the user model for use in other files  
+             module.exports = userModel;
+
+    ```
+12.In app.js file we will be adding a userModel variable and creating an api endpoint for 
+    the user as shown in line 2 and line 11 to 18.
+
+    ```app.js
+
+        const express = require("express")//create express server 
+        const userModel = require('./user.model'); //import user model to connect with MongoDB
+
+        const app = express(); //create a server with express app
+
+        app.listen(3000, () => {    //listen on port 3000
+            console.log("Server is running on port 3000...");
+        }); //start the server
+
+        //create a simple / api route
+        app.get("/", async (req, res) => { 
+             await userModel.create({ //create a new user in the database
+                username: "usertest1",
+                email: "usertest1@gmail.com",
+                age: 25
+             });
+             res.send("User created!"); //send a response
+        });
+            app.get("/health", (req, res) => { //create another api route for health check
+            res.send("Server is healthy!"); //send a response 
+        });
+
+    ```
+13.Finally executing the below commmand to reflect the changes made i.e database creation and user details were created successfully.
+
+/d/My Ai Apps/Create-Anything-with-Chatgpt-Ai (main)$ node app.js
+
+Output :
+        Server is running on port 3000...
+        MongoDB connected successfully
+
+KEY NOTE :
+
+- Once we execute the node app.js command the database gets created in the database.
+- But the user details will get reflect into the database once we execute/hit the api route  
+  in the browser : [api route](./Screenshots/Pic3-%20api%20route%20(User%20Details).png) until that the user data won't be reflected into the database.
+
+14.Now to perform the CURD operations in the MongoDB database :
+     - We need to create api's on the server side and  
+     - To test the api's created we need to use a POSTMAN tool.  
